@@ -1,3 +1,6 @@
 [submodule "examples/m-labs-lm32/lm32"]
 	path = examples/m-labs-lm32/lm32
 	url = https://github.com/m-labs/lm32.git
+[submodule "examples/serv/serv"]
+	path = examples/serv/serv
+	url = https://github.com/olofk/serv.git
