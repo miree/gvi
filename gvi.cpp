@@ -1052,6 +1052,9 @@ void generate_ghdl_verilator_interface(const Options &options)
 	//compile_vhdl_wrapper.append(" -I/usr/share/verilator/include -c ");
 	compile_vhdl_wrapper.append(" -I");
 	compile_vhdl_wrapper.append(verilator_path);
+	compile_vhdl_wrapper.append("/share/verilator/include/vltstd");
+	compile_vhdl_wrapper.append(" -I");
+	compile_vhdl_wrapper.append(verilator_path);
 	compile_vhdl_wrapper.append("/share/verilator/include -c .gvi/");
 	compile_vhdl_wrapper.append(options.top_module + options.generics_hash);
 	compile_vhdl_wrapper.append("/");

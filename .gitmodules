@@ -4,3 +4,6 @@
 [submodule "examples/serv/serv"]
 	path = examples/serv/serv
 	url = https://github.com/olofk/serv.git
+[submodule "examples/ibex/ibex"]
+	path = examples/ibex/ibex
+	url = https://github.com/lowRISC/ibex.git
