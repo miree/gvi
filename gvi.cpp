@@ -1082,6 +1082,7 @@ void generate_ghdl_verilator_interface(const Options &options)
 	          << std::endl; 
 	common_flags_out << "-Wl,.gvi/common.o "
 					 << "-Wl,.gvi/" << options.top_module + options.generics_hash << "/verilated.o "
+					 << "-Wl,.gvi/" << options.top_module + options.generics_hash << "/verilated_threads.o "
 					 << "-Wl,.gvi/" << options.top_module + options.generics_hash << "/verilated_vcd_c.o "
 					 << "-Wl,-lm -Wl,-lstdc++ ";
 
