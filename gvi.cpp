@@ -7,6 +7,7 @@
 #include <set>
 #include <exception>
 #include <cassert>
+#include <cstdint>
 
 std::string usage = " -v <verilog-source> -t <top-module> { -c <clk-port> } { -I <verilog-include-path> } { -G <verilator-parameter>=<value> } { -o <verilator-option> }[-g] [-n]\n    -g  Extends modulename with a hash of the given generics.\n        If not top module and verilator fiel is given, only\n        output the hash value and exit.\n    -n  No trace output (.vcd-file) of the verilated module";
 
