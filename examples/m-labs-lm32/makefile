@@ -1,10 +1,12 @@
 all: run
 
+VERILATOR_VERSION=`verilator --version | cut -d' ' -f 2 `
+
 gvi: ../../gvi.cpp
 	g++ -o $@ $<
 
 .gvi/lm32_top/lm32_top_wrapper.vhd: gvi lm32_top_fixed.v lm32_config.v
-	./gvi -v lm32_top_fixed.v -t lm32_top -c clk_i -I lm32/rtl
+	./gvi -vv $(VERILATOR_VERSION) -v lm32_top_fixed.v -t lm32_top -c clk_i -I lm32/rtl
 
 # fix the source code to be able to run in verilator
 lm32_top_fixed.v: lm32/rtl/lm32_top.v

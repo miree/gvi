@@ -1,3 +1,5 @@
+VERILATOR_VERSION=`verilator --version | cut -d' ' -f 2 `
+
 IBEX_BASEDIR=ibex
 
 IBEX_SOURCES_V=\
@@ -62,7 +64,7 @@ testbench: \
 
 .gvi/ibex_top/ibex_top_wrapper.vhd: gvi
 	sed -i 's/  logic \[Width-1:0\] rdata\_q;/\/\* verilator lint_off UNOPTFLAT \*\/logic \[Width-1:0\] rdata\_q;\/\* verilator lint\_on UNOPTFLAT \*\//' $(IBEX_BASEDIR)/rtl/ibex_csr.sv
-	./gvi -v $(IBEX_SOURCES_V )$(IBEX_SOURCES_SV) $(IBEX_INCLUDES) -t ibex_top
+	./gvi -vv $(VERILATOR_VERSION) -v $(IBEX_SOURCES_V )$(IBEX_SOURCES_SV) $(IBEX_INCLUDES) -t ibex_top
 
 
 gvi: ../../gvi.cpp

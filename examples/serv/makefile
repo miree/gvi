@@ -1,10 +1,12 @@
 all: run
 
+VERILATOR_VERSION=`verilator --version | cut -d' ' -f 2 `
+
 gvi: ../../gvi.cpp
 	g++ -o $@ $<
 
 .gvi/serv_rf_top/serv_rf_top_wrapper.vhd: gvi serv/rtl/serv_rf_top.v
-	./gvi -v serv/rtl/serv_rf_top.v -t serv_rf_top -I serv/rtl
+	./gvi -vv $(VERILATOR_VERSION) -v serv/rtl/serv_rf_top.v -t serv_rf_top -I serv/rtl
 
 run: testbench
 	ghdl -r testbench --stop-time=100us --wave=simulation.ghw --ieee-asserts=disable

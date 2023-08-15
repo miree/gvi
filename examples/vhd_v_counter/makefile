@@ -1,10 +1,12 @@
 all: run
 
+VERILATOR_VERSION=`verilator --version | cut -d' ' -f 2 `
+
 gvi: ../../gvi.cpp
 	g++ -o gvi ../../gvi.cpp
 
 .gvi/counter_v/counter_v_wrapper.vhd: gvi counter_v.v
-	./gvi -v counter_v.v -t counter_v -c clk_i 
+	./gvi -vv $(VERILATOR_VERSION) -v counter_v.v -t counter_v -c clk_i 
 
 run: testbench
 	ghdl -r testbench --stop-time=100us --wave=simulation.ghw --ieee-asserts=disable
