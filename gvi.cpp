@@ -9,7 +9,7 @@
 #include <cassert>
 #include <cstdint>
 
-std::string usage = " -v <verilog-source> -t <top-module> { -c <clk-port> } { -I <verilog-include-path> } { -G <verilator-parameter>=<value> } { -o <verilator-option> }[-g] [-n]\n    -g  Extends modulename with a hash of the given generics.\n        If not top module and verilator fiel is given, only\n        output the hash value and exit.\n    -n  No trace output (.vcd-file) of the verilated module";
+std::string usage = " [-vv <verilator-version>] -v <verilog-source> -t <top-module> { -c <clk-port> } { -I <verilog-include-path> } { -G <verilator-parameter>=<value> } { -o <verilator-option> }[-g] [-n]\n    -vv Specify the verilator version (default is 5.012)\n    -g  Extends modulename with a hash of the given generics.\n        If not top module and verilator fiel is given, only\n        output the hash value and exit.\n    -n  No trace output (.vcd-file) of the verilated module";
 
 
 struct Options
@@ -31,6 +31,7 @@ struct Options
 		throw std::runtime_error(std::string("expecting ") + expected + " after " + argv[i]);
 		return T();
 	}
+	std::string verilator_version;
 	std::string verilog_source;
 	std::vector<std::string> system_verilog_sources;
 	std::string top_module;
@@ -49,6 +50,7 @@ struct Options
 		for (int i = 1; i < argc; ++i) {
 			std::string argvi = argv[i];
 			     if (argvi == "-v") verilog_source = get_value<std::string>(i,argc,argv, "<verilog-source>");
+			else if (argvi == "-vv")verilator_version = get_value<std::string>(i,argc,argv, "<verilator-version>");
 			else if (argvi == "-t") top_module = get_value<std::string>(i,argc,argv, "<top-module>");
 			else if (argvi == "-c") clk_ports.push_back(get_value<std::string>(i,argc,argv, "<clk-port>"));
 			else if (argvi == "-I") verilog_include_paths.push_back(get_value<std::string>(i,argc,argv,"<verilog-include-path>"));
@@ -70,6 +72,9 @@ struct Options
 				exit(0);
 			}
 			throw std::runtime_error(std::string("usage: ")+argv[0]+" "+usage);
+		}
+		if (verilator_version.size() == 0) {
+			verilator_version = "5.012";
 		}
 	}
 	std::string generate_generics_hash(const std::vector<std::string> &generics) 
@@ -1082,9 +1087,11 @@ void generate_ghdl_verilator_interface(const Options &options)
 	          << "-Wl,.gvi/" << options.top_module + options.generics_hash << "/V" << options.top_module + options.generics_hash << "__ALL.a "
 	          << std::endl; 
 	common_flags_out << "-Wl,.gvi/common.o "
-					 << "-Wl,.gvi/" << options.top_module + options.generics_hash << "/verilated.o "
-					 << "-Wl,.gvi/" << options.top_module + options.generics_hash << "/verilated_threads.o "
-					 << "-Wl,.gvi/" << options.top_module + options.generics_hash << "/verilated_vcd_c.o "
+					 << "-Wl,.gvi/" << options.top_module + options.generics_hash << "/verilated.o ";
+	if (options.verilator_version[0] == '5') {
+		common_flags_out << "-Wl,.gvi/" << options.top_module + options.generics_hash << "/verilated_threads.o ";
+	}
+	common_flags_out << "-Wl,.gvi/" << options.top_module + options.generics_hash << "/verilated_vcd_c.o "
 					 << "-Wl,-lm -Wl,-lstdc++ ";
 
 }
