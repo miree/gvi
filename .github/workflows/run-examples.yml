@@ -5,9 +5,14 @@ jobs:
   build-and-run:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
       - name: Install packages
         run: sudo apt-get install ghdl-gcc verilator
       - name: Check GHDL version    
         run: ghdl --version
       - name: Check Verilator version    
         run: verilator --version
+      - name: Example vhd_v_counter
+        run: make -C examples/vhd_v_counter
