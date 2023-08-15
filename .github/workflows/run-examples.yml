@@ -16,11 +16,11 @@ jobs:
         run: verilator --version
       - name: run example vhd_v_counter
         run: make -C examples/vhd_v_counter
+      - name: run example m-labs-lm32
+        run: make -C examples/m-labs-lm32
       - name: run example two_modules
         run: make -C examples/two_modules
       - name: run example serv
         run: make -C examples/serv
       - name: run example ibex
         run: make -C examples/ibex
-      - name: run example m-labs-lm32
-        run: make -C examples/m-labs-lm32

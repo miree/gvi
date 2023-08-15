@@ -35,7 +35,6 @@ IBEX_SOURCES_SV=\
     $(IBEX_BASEDIR)/rtl/ibex_core.sv \
     $(IBEX_BASEDIR)/rtl/ibex_tracer_pkg.sv \
     $(IBEX_BASEDIR)/rtl/ibex_tracer.sv \
-    $(IBEX_BASEDIR)/rtl/ibex_top_tracing.sv \
     $(IBEX_BASEDIR)/rtl/ibex_top.sv 
 
 
