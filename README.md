@@ -10,16 +10,16 @@ GVI generates glue code that allows to run Verilog modules inside of VHDL testbe
 
 # How it works
 
-GHDL can call into C APIs using VHPIDIRECT. Verilator can generate C++ classes from a Verilog module, i.e. the verilated module, and C++ can create C APIs using extern "C". In order to use a verilated module from GHDL, two pieces of code are needed: 
+GHDL can call into C APIs using VHPIDIRECT. Verilator can generate a C++ class (the verilated module) from a Verilog module, and C++ can create C APIs using extern "C". In order to use a verilated module from GHDL, two pieces of code are needed: 
  - C++ code that provides a C API for the verilated module.
  - VHDL code with an entity that has the same interface as the targeted Verilog module, with an architecture that calls the C API for the verilated module.
 
-GVI calls Verilator, generates these two pieces of code, the C++ part, the VHDL part, and some text files with compiler flags that are needed to link everything together into an executable. Then it compiles everything into a library.
+GVI calls Verilator, compiles the verilated module, and generates these two pieces of code plus some text files containing compiler/linker flags that are needed to integrate everything with GHDL.
 
-All that is needed to integrate Verilog modules into a VHDL simulations are a few lines in a Makefile.
+With GVI, using Verilog modules in a VHDL simulation requires only a few lines in a Makefile.
 
-# Constraints
+# Limitations
  - GVI is developed and tested only with ghdl-gcc (GHDL with GCC backend)
- - It is only possible to use Verilog modules from VHDL, not the other way around.
+ - It is possible to use Verilog modules from VHDL, not the other way around.
  - Module parameters from the Verilog module are not translated into VHDL generics, they have to be specified when calling GVI.
    
