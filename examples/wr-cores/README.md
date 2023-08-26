@@ -1,11 +1,11 @@
-# A Testbench for the [WhiteRabbit core](https://ohwr.org/project/wr-cores) 
+# A testbench for the [WhiteRabbit core](https://ohwr.org/project/wr-cores) 
 This testbench is based on the repositories linked at the bottom of this page: https://ohwr.org/project/wr-cores/wikis/Wrpc-release-v42
 
 The WhiteRabbit core can be simulated with GVI.
-WhiteRabbit has a VHDL codebase but ueses a few Verilog modules (an LM32 CPU and a 1-wire module)
+WhiteRabbit has a VHDL codebase but ueses a few Verilog modules (an LM32 CPU and a 1-wire module).
 Compiling the examples requires hdlmake.
 
-To compile and run the example:
+To compile and run the testbench:
 
 ```bash
 [gvi/examples/wr-cores]$ git submodule init
@@ -18,7 +18,8 @@ To compile and run the example:
 [gvi/examples/wr-cores]$ make testbench
 [gvi/examples/wr-cores]$ make run
 ```
-A firmware binary wrc.bram is included.
+A firmware binary wrc.bram is included. 
+This is not a special "simulation-firmware" and it takes a while until something happens. 
 To compile the firmware an installation of lm32-elf-gcc is required.
 The patch (wrpc-sw.patch) is needed to compile with the lm32-elf-gcc from Arch Linux.
 
