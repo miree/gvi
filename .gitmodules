@@ -7,3 +7,9 @@
 [submodule "examples/ibex/ibex"]
 	path = examples/ibex/ibex
 	url = https://github.com/lowRISC/ibex.git
+[submodule "examples/wr-cores/wr-cores"]
+	path = examples/wr-cores/wr-cores
+	url = https://ohwr.org/project/wr-cores.git
+[submodule "examples/wr-cores/wrpc-sw"]
+	path = examples/wr-cores/wrpc-sw
+	url = https://ohwr.org/project/wrpc-sw.git

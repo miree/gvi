@@ -1,0 +1,109 @@
+diff --git a/.gitmodules b/.gitmodules
+index be9ec712..f51caa5c 100644
+--- a/.gitmodules
++++ b/.gitmodules
+@@ -1,3 +1,3 @@
+ [submodule "ppsi"]
+ 	path = ppsi
+-	url = git://ohwr.org/white-rabbit/ppsi.git
++	url = https://ohwr.org/project/ppsi.git
+diff --git a/dev/sdb-storage.c b/dev/sdb-storage.c
+index 7a0eee22..9b926a3b 100644
+--- a/dev/sdb-storage.c
++++ b/dev/sdb-storage.c
+@@ -392,7 +392,7 @@ int set_persistent_mac(uint8_t portnum, uint8_t *mac)
+ 
+ 
+ /* Erase SFB database in the memory */
+-int32_t storage_sfpdb_erase(void)
++int storage_sfpdb_erase(void)
+ {
+ 	int ret;
+ 
+diff --git a/include/ptpd_netif.h b/include/ptpd_netif.h
+index 645f93d9..c73e5ba4 100644
+--- a/include/ptpd_netif.h
++++ b/include/ptpd_netif.h
+@@ -13,7 +13,7 @@
+ 
+ #include <stdio.h>
+ #include <board.h>
+-//#include <inttypes.h>
++#include <inttypes.h>
+ 
+ #define PTPD_SOCK_UDP		0 /* wrong name, it should be "WRPC" */
+ #define PTPD_SOCK_RAW_ETHERNET 	1 /* but used in ppsi, which I won't change */
+diff --git a/include/std/inttypes.h b/include/std/inttypes.h
+index 7bcf08a7..c6c4e540 100644
+--- a/include/std/inttypes.h
++++ b/include/std/inttypes.h
+@@ -1,17 +1,21 @@
+ #ifndef __WRAPPED_INTTYPES_H
+ #define __WRAPPED_INTTYPES_H
+ 
+-typedef unsigned char uint8_t;
+-typedef unsigned short uint16_t;
+-typedef unsigned int uint32_t;
+-typedef unsigned long long uint64_t;
++#include <sys/_stdint.h>
+ 
+-typedef signed char int8_t;
+-typedef signed short int16_t;
+-typedef signed int int32_t;
+-typedef signed long long int64_t;
++// typedef unsigned char uint8_t;
++// typedef unsigned short uint16_t;
++// typedef unsigned int uint32_t;
++// typedef unsigned long long uint64_t;
+ 
+-typedef unsigned long intptr_t;
++// typedef signed char int8_t;
++// typedef signed short int16_t;
++// typedef signed int int32_t;
++// typedef signed long long int64_t;
++
++// typedef unsigned long intptr_t;
++
++typedef long unsigned int useconds_t;
+ 
+ #define UINT32_MAX 4294967295U
+ 
+diff --git a/liblinux/extest/extest.c b/liblinux/extest/extest.c
+index 40b83d2a..6a329286 100644
+--- a/liblinux/extest/extest.c
++++ b/liblinux/extest/extest.c
+@@ -84,7 +84,7 @@ static void sighandler(int sig)
+ 	 * we use sys_siglist[] instead of strsignal() to stay compatible
+ 	 * with old versions of glibc
+ 	 */
+-	printf("\nEXIT: Signal %s received\n", sys_siglist[sig]);
++	printf("\nEXIT: Signal %s received\n", strsignal(sig));//sys_siglist[sig]);
+ 	free(_cmdlist);
+ 	if (user_sig_hndl)
+ 		user_sig_hndl();
+diff --git a/tools/wrpc-w1-read.c b/tools/wrpc-w1-read.c
+index 8624f48a..c300ab9c 100644
+--- a/tools/wrpc-w1-read.c
++++ b/tools/wrpc-w1-read.c
+@@ -48,7 +48,7 @@ int verbose;
+ 
+ /* sames name as in ./dev because we reuse lm32 code */
+ void *BASE_ONEWIRE;
+-struct w1_bus wrpc_w1_bus;
++extern struct w1_bus wrpc_w1_bus;
+ 
+ 
+ static int spec_read_w1(struct spec_device *spec, int w1base, int w1len)
+diff --git a/tools/wrpc-w1-write.c b/tools/wrpc-w1-write.c
+index 9f789c35..3f6835f5 100644
+--- a/tools/wrpc-w1-write.c
++++ b/tools/wrpc-w1-write.c
+@@ -48,7 +48,7 @@ int verbose;
+ 
+ /* sames name as in ./dev because we reuse lm32 code */
+ void *BASE_ONEWIRE;
+-struct w1_bus wrpc_w1_bus;
++extern struct w1_bus wrpc_w1_bus;
+ 
+ 
+ static int spec_write_w1(struct spec_device *spec, int w1base, int w1len)

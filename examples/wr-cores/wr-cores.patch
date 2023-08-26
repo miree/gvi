@@ -1,0 +1,21 @@
+diff --git a/modules/wr_endpoint/ep_rx_buffer.vhd b/modules/wr_endpoint/ep_rx_buffer.vhd
+index 8295fac4..4ca752bc 100644
+--- a/modules/wr_endpoint/ep_rx_buffer.vhd
++++ b/modules/wr_endpoint/ep_rx_buffer.vhd
+@@ -126,13 +126,15 @@ architecture behavioral of ep_rx_buffer is
+       signal din_valid : in  std_logic;
+       signal fab       : out t_ep_internal_fabric;
+       early_eof        :     boolean := false) is
++    variable cur_addr_1_downto_0 : std_logic_vector(1 downto 0);
+   begin
++    cur_addr_1_downto_0 := cur_addr(1 downto 0);
+ 
+     fab.data <= din(15 downto 0);
+     if(din_valid = '1') then
+ 
+       if(din(17 downto 16) = "10") then  -- some fancy encoding is necessary here
+-        case cur_addr(1 downto 0) is
++        case cur_addr_1_downto_0 is
+           when c_WRF_DATA =>
+             fab.addr <= c_WRF_OOB after 1 ns;
+           when c_WRF_STATUS =>
