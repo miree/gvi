@@ -1,6 +1,9 @@
 GHDLFLAGS = --ieee=synopsys --std=93c \
 	-fexplicit -frelaxed-rules --no-vital-checks --warn-binding --mb-comments 
 
+VERILATOR_VERSION=`verilator --version | cut -d' ' -f 2 `
+
+
 all: vhdl_sources testbench
 
 gvi: ../../gvi.cpp
@@ -44,31 +47,31 @@ run: testbench makefile
 
 ## auto generate lm32 vhdl wrapper 
 .gvi/lm32_top_full_debug/lm32_top_full_debug_wrapper.vhd: lm32_allprofiles.v gvi
-	./gvi -v lm32_allprofiles.v -t lm32_top_full_debug -I wr-cores/ip_cores/general-cores/modules/wishbone/wb_lm32/src -I wr-cores/ip_cores/general-cores/modules/wishbone/wb_lm32/platform/generic
+	./gvi -vv $(VERILATOR_VERSION) -v lm32_allprofiles.v -t lm32_top_full_debug -I wr-cores/ip_cores/general-cores/modules/wishbone/wb_lm32/src -I wr-cores/ip_cores/general-cores/modules/wishbone/wb_lm32/platform/generic
 	sed -i '/entity lm32_top_full_debug is/ageneric(eba_reset: std_logic_vector(31 downto 0);sdb_address: std_logic_vector(31 downto 0));' .gvi/lm32_top_full_debug/lm32_top_full_debug_wrapper.vhd
 
 .gvi/lm32_top_full/lm32_top_full_wrapper.vhd: lm32_allprofiles.v gvi
-	./gvi -v lm32_allprofiles.v -t lm32_top_full -I wr-cores/ip_cores/general-cores/modules/wishbone/wb_lm32/src -I wr-cores/ip_cores/general-cores/modules/wishbone/wb_lm32/platform/generic
+	./gvi -vv $(VERILATOR_VERSION) -v lm32_allprofiles.v -t lm32_top_full -I wr-cores/ip_cores/general-cores/modules/wishbone/wb_lm32/src -I wr-cores/ip_cores/general-cores/modules/wishbone/wb_lm32/platform/generic
 	sed -i '/entity lm32_top_full is/ageneric(eba_reset: std_logic_vector(31 downto 0);sdb_address: std_logic_vector(31 downto 0));' .gvi/lm32_top_full/lm32_top_full_wrapper.vhd
 
 .gvi/lm32_top_medium_icache_debug/lm32_top_medium_icache_debug_wrapper.vhd: lm32_allprofiles.v gvi
-	./gvi -v lm32_allprofiles.v -t lm32_top_medium_icache_debug -I wr-cores/ip_cores/general-cores/modules/wishbone/wb_lm32/src -I wr-cores/ip_cores/general-cores/modules/wishbone/wb_lm32/platform/generic
+	./gvi -vv $(VERILATOR_VERSION) -v lm32_allprofiles.v -t lm32_top_medium_icache_debug -I wr-cores/ip_cores/general-cores/modules/wishbone/wb_lm32/src -I wr-cores/ip_cores/general-cores/modules/wishbone/wb_lm32/platform/generic
 	sed -i '/entity lm32_top_medium_icache_debug is/ageneric(eba_reset: std_logic_vector(31 downto 0);sdb_address: std_logic_vector(31 downto 0));' .gvi/lm32_top_medium_icache_debug/lm32_top_medium_icache_debug_wrapper.vhd
 
 .gvi/lm32_top_medium_debug/lm32_top_medium_debug_wrapper.vhd: lm32_allprofiles.v gvi
-	./gvi -v lm32_allprofiles.v -t lm32_top_medium_debug -I wr-cores/ip_cores/general-cores/modules/wishbone/wb_lm32/src -I wr-cores/ip_cores/general-cores/modules/wishbone/wb_lm32/platform/generic
+	./gvi -vv $(VERILATOR_VERSION) -v lm32_allprofiles.v -t lm32_top_medium_debug -I wr-cores/ip_cores/general-cores/modules/wishbone/wb_lm32/src -I wr-cores/ip_cores/general-cores/modules/wishbone/wb_lm32/platform/generic
 	sed -i '/entity lm32_top_medium_debug is/ageneric(eba_reset: std_logic_vector(31 downto 0);sdb_address: std_logic_vector(31 downto 0));' .gvi/lm32_top_medium_debug/lm32_top_medium_debug_wrapper.vhd
 
 .gvi/lm32_top_medium_icache/lm32_top_medium_icache_wrapper.vhd: lm32_allprofiles.v gvi
-	./gvi -v lm32_allprofiles.v -t lm32_top_medium_icache -I wr-cores/ip_cores/general-cores/modules/wishbone/wb_lm32/src -I wr-cores/ip_cores/general-cores/modules/wishbone/wb_lm32/platform/generic
+	./gvi -vv $(VERILATOR_VERSION) -v lm32_allprofiles.v -t lm32_top_medium_icache -I wr-cores/ip_cores/general-cores/modules/wishbone/wb_lm32/src -I wr-cores/ip_cores/general-cores/modules/wishbone/wb_lm32/platform/generic
 	sed -i '/entity lm32_top_medium_icache is/ageneric(eba_reset: std_logic_vector(31 downto 0);sdb_address: std_logic_vector(31 downto 0));' .gvi/lm32_top_medium_icache/lm32_top_medium_icache_wrapper.vhd
 
 .gvi/lm32_top_medium/lm32_top_medium_wrapper.vhd: lm32_allprofiles.v gvi
-	./gvi -v lm32_allprofiles.v -t lm32_top_medium -I wr-cores/ip_cores/general-cores/modules/wishbone/wb_lm32/src -I wr-cores/ip_cores/general-cores/modules/wishbone/wb_lm32/platform/generic
+	./gvi -vv $(VERILATOR_VERSION) -v lm32_allprofiles.v -t lm32_top_medium -I wr-cores/ip_cores/general-cores/modules/wishbone/wb_lm32/src -I wr-cores/ip_cores/general-cores/modules/wishbone/wb_lm32/platform/generic
 	sed -i '/entity lm32_top_medium is/ageneric(eba_reset: std_logic_vector(31 downto 0);sdb_address: std_logic_vector(31 downto 0));' .gvi/lm32_top_medium/lm32_top_medium_wrapper.vhd
 
 .gvi/lm32_top_minimal/lm32_top_minimal_wrapper.vhd: lm32_allprofiles.v gvi
-	./gvi -v lm32_allprofiles.v -t lm32_top_minimal -I wr-cores/ip_cores/general-cores/modules/wishbone/wb_lm32/src -I wr-cores/ip_cores/general-cores/modules/wishbone/wb_lm32/platform/generic
+	./gvi -vv $(VERILATOR_VERSION) -v lm32_allprofiles.v -t lm32_top_minimal -I wr-cores/ip_cores/general-cores/modules/wishbone/wb_lm32/src -I wr-cores/ip_cores/general-cores/modules/wishbone/wb_lm32/platform/generic
 	sed -i '/entity lm32_top_minimal is/ageneric(eba_reset: std_logic_vector(31 downto 0);sdb_address: std_logic_vector(31 downto 0));' .gvi/lm32_top_minimal/lm32_top_minimal_wrapper.vhd
 
 
@@ -79,7 +82,7 @@ lm32_allprofiles.v: wr-cores/ip_cores/general-cores/modules/wishbone/wb_lm32/gen
 	sed -i '/input \[ (32-1):0\] interrupt;/a \/\* verilator lint_on  SYMRSVDWORD \*\/' $@
 
 .gvi/sockit_owm/sockit_owm_wrapper.vhd: sockit_owm.v gvi
-	./gvi -v $< -t sockit_owm -G BTP_N=5.0 -G BTP_O=1.0 -G OWN=2 -G CDR_N=4 -G CDR_O=0
+	./gvi -vv $(VERILATOR_VERSION) -v $< -t sockit_owm -G BTP_N=5.0 -G BTP_O=1.0 -G OWN=2 -G CDR_N=4 -G CDR_O=0
 	sed -i '/entity sockit_owm is/ageneric(BTP_N: string; BTP_O: string; OWN: integer; CDR_N : integer; CDR_O : integer);' .gvi/sockit_owm/sockit_owm_wrapper.vhd
 
 sockit_owm.v:  wr-cores/ip_cores/general-cores/modules/wishbone/wb_onewire_master/sockit_owm.v
