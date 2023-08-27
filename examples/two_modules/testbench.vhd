@@ -4,6 +4,7 @@ use ieee.numeric_std.all;
 
 entity testbench is
 	generic (portsize : integer := 61);
+
 end entity;
 
 architecture simulation of testbench is

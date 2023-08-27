@@ -7,6 +7,7 @@ GVI generates glue code that allows to run Verilog modules inside of VHDL testbe
  - examples/m-labs-lm32: Run an instance of the lm32 cpu.
  - examples/serv: Run an instance of the serv risc-v cpu.
  - examples/ibex: Run an instance of a more performant risc-v cpu.
+ - examples/wr-cores: Run an instance of the WhiteRabbit core. This is a more complex example, [build instructions are here](examples/wr-cores/README.md)
 
 # How it works
 

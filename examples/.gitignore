@@ -1,0 +1,7 @@
+*.o
+testbench
+*.cf
+*.ghw
+*.vcd
+.gvi
+gvi
