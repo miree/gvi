@@ -475,8 +475,12 @@ std::string ghdl_verilator_interface_set_inputs(const std::vector<Port> &ports, 
 	for (auto port: ports) {
 		if (port.bitsize <= 64) {
 			if (port.direction == "in") {
-				if (port.bitsize == 1 && !port.is_array) {
-					out << "\t\t" << function_name_prefix(modulename) << port.name << "(" << modulename << "_idx, to_integer(" << port.name << "));" << std::endl;
+				if (port.bitsize == 1) {
+					if (port.is_array) {
+						out << "\t\t" << function_name_prefix(modulename) << port.name << "(" << modulename << "_idx, to_integer(unsigned(" << port.name << ")));" << std::endl;
+					} else {
+						out << "\t\t" << function_name_prefix(modulename) << port.name << "(" << modulename << "_idx, to_integer(" << port.name << "));" << std::endl;
+					}
 				} else if (port.bitsize <= 32) {
 					out << "\t\t" << function_name_prefix(modulename) << port.name << "(" << modulename << "_idx, to_integer(signed(" << port.name << ")));" << std::endl;
 				} else {
