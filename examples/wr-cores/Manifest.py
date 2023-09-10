@@ -1,5 +1,6 @@
 files = [
    "testbench.vhd",
+   "uart.vhd"
 ]
 modules = {
   "local" : [

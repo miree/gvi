@@ -225,6 +225,11 @@ architecture simulation of testbench is
     signal aux_diag_i :   t_generic_word_array(g_diag_ro_size-1 downto 0) := (others => (others => '0'));
     signal aux_diag_o :   t_generic_word_array(g_diag_rw_size-1 downto 0) := (others => (others => '0'));
 
+
+    -- Output from UART decoder
+    signal uart_parallel_o : std_logic_vector(7 downto 0) := (others => '0');
+    signal uart_stb_o      : std_logic := '0';
+
 begin
   clk_sys_i <= not clk_sys_i after 16 ns;
   clk_dmtd_i <= not clk_dmtd_i after 7.992 ns; -- approx. 125.125 MHz
@@ -234,6 +239,19 @@ begin
 
 
   rst_n_i <= '1' after 50 ns;
+
+  uart_rx: entity work.uart_rx 
+  generic map (
+    g_clk_freq  => 62500000,
+    g_baud_rate => 115200,
+    g_bits      => 8
+  )
+  port map (
+    clk_i   => clk_sys_i,
+    dat_o   => uart_parallel_o,
+    stb_o   => uart_stb_o,
+    rx_i    => uart_txd_o
+  );
 
 
 
