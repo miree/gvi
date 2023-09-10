@@ -644,6 +644,13 @@ std::string cpp_verilator_interface_preface(const std::string &modulename, bool 
 	return out.str();
 }
 
+std::string gen_mask(int bitsize) {
+	uint64_t num = ((uint64_t)1 << bitsize) - 1;
+	std::ostringstream out;
+	out << "0x" << std::hex << num;
+	return out.str();
+}
+
 std::string cpp_verilator_interface_function_definition_in(const std::string &modulename, const Port &port)
 {
 	std::string prefix = function_name_prefix(modulename);
@@ -651,11 +658,11 @@ std::string cpp_verilator_interface_function_definition_in(const std::string &mo
 	std::ostringstream out;
 	if (port.bitsize <= 32) {
 		out << "\tvoid " << function_name_prefix(modulename) << port.name << "(int idx, int " << port.name_orig << ") {" << std::endl;
-		out << "\t\t" << modulename << "_top_instances[idx]->" << port.name_orig << " = " << port.name_orig << ";" << std::endl;
+		out << "\t\t" << modulename << "_top_instances[idx]->" << port.name_orig << " = " << gen_mask(port.bitsize) << " & (unsigned)" << port.name_orig << ";" << std::endl;
 		out << "\t}" << std::endl;
 	} else if (port.bitsize <= 64) {
 		out << "\tvoid " << function_name_prefix(modulename) << port.name << "(int idx, int " << port.name << "_gvi_lo, int " << port.name << "_gvi_hi" << ") {" << std::endl;
-		out << "\t\t" << modulename << "_top_instances[idx]->" << port.name_orig << " = (unsigned)" << port.name << "_gvi_hi;" << std::endl;
+		out << "\t\t" << modulename << "_top_instances[idx]->" << port.name_orig << " = " << gen_mask(port.bitsize) << " & (unsigned)" << port.name << "_gvi_hi;" << std::endl;
 		out << "\t\t" << modulename << "_top_instances[idx]->" << port.name_orig << " <<= 32;" << std::endl;
 		out << "\t\t" << modulename << "_top_instances[idx]->" << port.name_orig << " |= (unsigned)" << port.name << "_gvi_lo;" << std::endl;
 		out << "\t}" << std::endl;
