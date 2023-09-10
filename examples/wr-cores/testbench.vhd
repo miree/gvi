@@ -119,6 +119,15 @@ architecture simulation of testbench is
     signal owr_en_o    :  std_logic_vector(1 downto 0) := (others => '0');
     signal owr_i       :   std_logic_vector(1 downto 0) := (others => '1');
 
+    signal owr_wr    : std_logic_vector(1 downto 0) := (others => '1');
+
+    -- physical 1-wire lines
+    signal owr         : std_logic_vector(1 downto 0) := (others => '0');
+
+    -- tempsense 1-wire lines 
+    signal owr_tempsense_i : std_logic := '1';
+    signal owr_tempsense_o : std_logic := '1';
+
     -----------------------------------------
     --External WB interface
     -----------------------------------------
@@ -231,9 +240,9 @@ architecture simulation of testbench is
     signal uart_stb_o      : std_logic := '0';
 
 begin
-  clk_sys_i <= not clk_sys_i after 16 ns;
-  clk_dmtd_i <= not clk_dmtd_i after 7.992 ns; -- approx. 125.125 MHz
-  clk_ref_i  <= not clk_ref_i after 8 ns;
+  clk_sys_i <= not clk_sys_i after 8 ns;  -- 62.5 MHz
+  clk_dmtd_i <= not clk_dmtd_i after 3.996 ns; -- approx. 125.125 MHz
+  clk_ref_i  <= not clk_ref_i after 4 ns;
 
   --clk_aux_i <= not clk_aux_i after 8 ns;
 
@@ -243,7 +252,7 @@ begin
   uart_rx: entity work.uart_rx 
   generic map (
     g_clk_freq  => 62500000,
-    g_baud_rate => 115200,
+    g_baud_rate => 115200*4,
     g_bits      => 8
   )
   port map (
@@ -253,6 +262,22 @@ begin
     rx_i    => uart_txd_o
   );
 
+
+  -- 1-wire feed-back
+  owr_wr(0) <= owr_pwren_o(0) when (owr_pwren_o(0) = '1' or owr_en_o(0) = '1') else '1';
+  owr_wr(1) <= owr_pwren_o(1) when (owr_pwren_o(1) = '1' or owr_en_o(1) = '1') else '1';
+  --owr(0)   <= owr_pwren_o(0) when (owr_pwren_o(0) = '1' or owr_en_o(0) = '1') else '1';
+  --owr(1)   <= owr_pwren_o(1) when (owr_pwren_o(1) = '1' or owr_en_o(1) = '1') else '1';
+  owr(0) <= '0' when ( owr_wr(0) = '0' or owr_tempsense_o = '0' ) else '1';
+  owr(1) <= '0' when ( owr_wr(1) = '0' ) else '1';
+  
+  owr_i <= owr;
+
+  tempsense: entity work.one_wire_tempsense
+  port map (
+      owr_i => owr(0),
+      owr_o => owr_tempsense_o
+    );
 
 
   dut: entity work.wr_core

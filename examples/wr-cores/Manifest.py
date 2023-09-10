@@ -1,6 +1,7 @@
 files = [
    "testbench.vhd",
-   "uart.vhd"
+   "uart.vhd",
+   "one_wire_tempsense.vhd"
 ]
 modules = {
   "local" : [

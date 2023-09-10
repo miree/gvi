@@ -1,3 +1,4 @@
+one_wire_tempsense.vhd
 uart.vhd
 wr-cores/ip_cores/general-cores/modules/axi/axi4lite32_axi4full64_bridge/axi4lite32_axi4full64_bridge.vhd
 wr-cores/ip_cores/general-cores/modules/common/gc_comparator.vhd
