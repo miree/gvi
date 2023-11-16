@@ -662,7 +662,7 @@ std::string cpp_verilator_interface_function_definition_in(const std::string &mo
 		out << "\t}" << std::endl;
 	} else if (port.bitsize <= 64) {
 		out << "\tvoid " << function_name_prefix(modulename) << port.name << "(int idx, int " << port.name << "_gvi_lo, int " << port.name << "_gvi_hi" << ") {" << std::endl;
-		out << "\t\t" << modulename << "_top_instances[idx]->" << port.name_orig << " = " << gen_mask(port.bitsize) << " & (unsigned)" << port.name << "_gvi_hi;" << std::endl;
+		out << "\t\t" << modulename << "_top_instances[idx]->" << port.name_orig << " = " << gen_mask(port.bitsize-32) << " & (unsigned)" << port.name << "_gvi_hi;" << std::endl;
 		out << "\t\t" << modulename << "_top_instances[idx]->" << port.name_orig << " <<= 32;" << std::endl;
 		out << "\t\t" << modulename << "_top_instances[idx]->" << port.name_orig << " |= (unsigned)" << port.name << "_gvi_lo;" << std::endl;
 		out << "\t}" << std::endl;
