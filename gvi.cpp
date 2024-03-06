@@ -9,7 +9,7 @@
 #include <cassert>
 #include <cstdint>
 
-std::string usage = " [-vv <verilator-version>] -v <verilog-source> -t <top-module> { -c <clk-port> } { -I <verilog-include-path> } { -G <verilator-parameter>=<value> } { -o <verilator-option> }[-g] [-n]\n    -vv Specify the verilator version (default is 5.012)\n    -g  Extends modulename with a hash of the given generics.\n        If not top module and verilator fiel is given, only\n        output the hash value and exit.\n    -n  No trace output (.vcd-file) of the verilated module";
+std::string usage = " [-p] [-vv <verilator-version>] -v <verilog-source> -t <top-module> { -c <clk-port> } { -I <verilog-include-path> } { -G <verilator-parameter>=<value> } { -o <verilator-option> }[-g] [-n]\n    -vv Specify the verilator version (default is 5.012)\n    -g  Extends modulename with a hash of the given generics.\n        If not top module and verilator fiel is given, only\n        output the hash value and exit.\n    -n  No trace output (.vcd-file) of the verilated module.\n    -p  use pkg-config to determine verilator compiler flags.\n        If not set, compiler flags are set based on the location of verilator executable.";
 
 
 struct Options
@@ -44,8 +44,9 @@ struct Options
 	bool no_traces;
 	bool unittest;
 	bool help;
+	bool use_pkg_config;
 	Options(int argc, char *argv[])
-		: verilog_source(""), top_module(""), add_generics_hash(false), generics_hash(""), no_traces(false), unittest(false), help(false)
+		: verilog_source(""), top_module(""), add_generics_hash(false), generics_hash(""), no_traces(false), unittest(false), help(false), use_pkg_config(false)
 	{
 		for (int i = 1; i < argc; ++i) {
 			std::string argvi = argv[i];
@@ -60,6 +61,7 @@ struct Options
 			else if (argvi == "-g") add_generics_hash = true;
 			else if (argvi == "-u") unittest = true;
 			else if (argvi == "-h") help = true;
+			else if (argvi == "-p") use_pkg_config = true;
 			else if (argvi[0] != '-') system_verilog_sources.push_back(argvi); 
 			else throw std::runtime_error(std::string("unknown option ") + argv[i]);
 		}
@@ -1047,32 +1049,38 @@ void generate_ghdl_verilator_interface(const Options &options)
 	}
 
 	// find verilator installation directory
-	std::cerr << "gvi: find verilator prefix: ";
-	std::string which_verilator_output;
-	FILE *fp;
-	if ((fp = popen("which verilator", "r")) == NULL) {
-		throw std::runtime_error("cannot determine the location of verilator execuable");
+	std::string verilator_cflags;
+	if (options.use_pkg_config) {
+		verilator_cflags = " `pkg-config verilator --cflags` ";
+	} else {
+		std::cerr << "gvi: find verilator prefix: ";
+		std::string which_verilator_output;
+		FILE *fp;
+		if ((fp = popen("which verilator", "r")) == NULL) {
+			throw std::runtime_error("cannot determine the location of verilator execuable");
+		}
+		char buffer[1024];
+		while (fgets(buffer, 1024, fp) != NULL) {
+			which_verilator_output.append(buffer);
+		}
+	    if(pclose(fp))  {
+			throw std::runtime_error("cannot determine the location of verilator execuable");
+	    }	
+		std::string verilator_path = which_verilator_output.substr(0,which_verilator_output.find("/bin/verilator"));
+		std::cerr << verilator_path << std::endl;
+		verilator_cflags.append(" -I");
+		verilator_cflags.append(verilator_path);
+		verilator_cflags.append("/share/verilator/include/vltstd");
+		verilator_cflags.append(" -I");
+		verilator_cflags.append(verilator_path);
+		verilator_cflags.append("/share/verilator/include ");
 	}
-	char buffer[1024];
-	while (fgets(buffer, 1024, fp) != NULL) {
-		which_verilator_output.append(buffer);
-	}
-    if(pclose(fp))  {
-		throw std::runtime_error("cannot determine the location of verilator execuable");
-    }	
-	std::string verilator_path = which_verilator_output.substr(0,which_verilator_output.find("/bin/verilator"));
-	std::cerr << verilator_path << std::endl;
 
 	std::string compile_vhdl_wrapper;
 	compile_vhdl_wrapper.append("g++ -DVM_TRACE -I.gvi/");
 	compile_vhdl_wrapper.append(options.top_module + options.generics_hash);
-	//compile_vhdl_wrapper.append(" -I/usr/share/verilator/include -c ");
-	compile_vhdl_wrapper.append(" -I");
-	compile_vhdl_wrapper.append(verilator_path);
-	compile_vhdl_wrapper.append("/share/verilator/include/vltstd");
-	compile_vhdl_wrapper.append(" -I");
-	compile_vhdl_wrapper.append(verilator_path);
-	compile_vhdl_wrapper.append("/share/verilator/include -c .gvi/");
+	compile_vhdl_wrapper.append(verilator_cflags);
+	compile_vhdl_wrapper.append("-c .gvi/");
 	compile_vhdl_wrapper.append(options.top_module + options.generics_hash);
 	compile_vhdl_wrapper.append("/");
 	compile_vhdl_wrapper.append(options.top_module + options.generics_hash);
