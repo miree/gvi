@@ -8,6 +8,7 @@ GVI generates glue code that allows to run Verilog modules inside of VHDL testbe
  - examples/serv: Run an instance of the serv risc-v cpu.
  - examples/ibex: Run an instance of a more performant risc-v cpu.
  - examples/wr-cores: Run an instance of the WhiteRabbit core, [build instructions are here](examples/wr-cores/README.md)
+ - examples/vhdl_verilog_mixed: Demonstrate a fully mixed language design. VHDL implementation, Verilog implementation, and Verilog instantiating VHDL entity running together in the same testbench. This is possible because GHDL can convert VHDL code into Verilog code using its synthesis capabilities (only tested with GHDL version 4). 
 
 # How it works
 
@@ -20,7 +21,8 @@ GVI calls Verilator, compiles the verilated module, and generates these two piec
 With GVI, using Verilog modules in a VHDL simulation requires only a few lines in a Makefile.
 
 # Limitations
+ - GVI currently only supports up to 64-bit wide signals at the interface layer.
  - GVI is developed and tested only with ghdl-gcc (GHDL with GCC backend)
- - It is possible to use Verilog modules from VHDL, not the other way around.
+ - It is possible to use Verilog modules from VHDL, not the other way around. This limitation can be overcome by automatically converting VHDL code to Verilog using GHDL sythesis feature (see examples/vhdl_verilog_mixed).
  - Module parameters from the Verilog module are not translated into VHDL generics, they have to be specified when calling GVI.
    

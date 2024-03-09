@@ -26,3 +26,5 @@ jobs:
         run: make -C examples/serv
       - name: run example ibex
         run: make -C examples/ibex
+      - name: run example vhdl_verilog_mixed
+        run: make -C examples/vhdl_verilog_mixed
