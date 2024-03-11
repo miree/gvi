@@ -20,13 +20,19 @@ jobs:
         run: make -C examples/vhd_v_counter
       - name: run example m-labs-lm32
         run: make -C examples/m-labs-lm32
-      - name: run example two_modules
+      - name: run example two_modules_16bit
         run: make -C examples/two_modules PORTSIZE=16
+      - name: run example two_modules_32bit
         run: make -C examples/two_modules clean; make -C examples/two_modules PORTSIZE=32
+      - name: run example two_modules_48bit
         run: make -C examples/two_modules clean; make -C examples/two_modules PORTSIZE=48
+      - name: run example two_modules_64bit
         run: make -C examples/two_modules clean; make -C examples/two_modules PORTSIZE=64
+      - name: run example two_modules_96bit
         run: make -C examples/two_modules clean; make -C examples/two_modules PORTSIZE=96
+      - name: run example two_modules_128bit
         run: make -C examples/two_modules clean; make -C examples/two_modules PORTSIZE=128
+      - name: run example two_modules_136bit
         run: make -C examples/two_modules clean; make -C examples/two_modules PORTSIZE=136
       - name: run example serv
         run: make -C examples/serv
