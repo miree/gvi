@@ -21,7 +21,13 @@ jobs:
       - name: run example m-labs-lm32
         run: make -C examples/m-labs-lm32
       - name: run example two_modules
-        run: make -C examples/two_modules
+        run: make -C examples/two_modules PORTSIZE=16
+        run: make -C examples/two_modules clean; make -C examples/two_modules PORTSIZE=32
+        run: make -C examples/two_modules clean; make -C examples/two_modules PORTSIZE=48
+        run: make -C examples/two_modules clean; make -C examples/two_modules PORTSIZE=64
+        run: make -C examples/two_modules clean; make -C examples/two_modules PORTSIZE=96
+        run: make -C examples/two_modules clean; make -C examples/two_modules PORTSIZE=128
+        run: make -C examples/two_modules clean; make -C examples/two_modules PORTSIZE=136
       - name: run example serv
         run: make -C examples/serv
       - name: run example ibex

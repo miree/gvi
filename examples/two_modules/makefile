@@ -5,7 +5,7 @@ VERILATOR_VERSION=`verilator --version | cut -d' ' -f 2 `
 gvi: ../../gvi.cpp
 	g++ -o gvi ../../gvi.cpp
 
-PORTSIZE=48
+PORTSIZE?=48
 
 .gvi/test_v/test_v_wrapper.vhd: gvi test_v.v makefile
 	./gvi -vv $(VERILATOR_VERSION) -v test_v.v -t test_v -o -Gportsize=$(PORTSIZE) # use general option forwarding to set portsize
