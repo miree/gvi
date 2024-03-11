@@ -45,7 +45,9 @@ architecture simulation of testbench is
 	signal data_addr_o            : std_logic_vector(31 downto 0) := (others => '0');
 	signal data_wdata_o           : std_logic_vector(31 downto 0) := (others => '0');
 	signal data_rdata_i           : std_logic_vector(31 downto 0) := (others => '0');
+	signal scramble_key_i         : std_logic_vector(127 downto 0) := (others => '0');
 	signal scramble_nonce_i       : std_logic_vector(63 downto 0) := (others => '0');
+	signal crash_dump_o           : std_logic_vector(159 downto 0) := (others => '0');
 
 	signal reg : std_logic_vector(31 downto 0) := (others => '0');
 
@@ -138,7 +140,9 @@ begin
 		data_addr_o            => data_addr_o,
 		data_wdata_o           => data_wdata_o,
 		data_rdata_i           => data_rdata_i,
-		scramble_nonce_i       => scramble_nonce_i
+		scramble_key_i         => scramble_key_i,
+		scramble_nonce_i       => scramble_nonce_i,
+		crash_dump_o           => crash_dump_o
 		);
 
 end architecture simulation;
