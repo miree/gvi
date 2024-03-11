@@ -685,7 +685,7 @@ std::string cpp_verilator_interface_function_definition_in(const std::string &mo
 			}				
 		} else { // port.bitsize > 64
 			for (int part = parts-1; part >= 0; --part) {
-				out << "\t\t" << modulename << "_top_instances[idx]->" << port.name_orig << ".at(" << part << ") = " << gen_mask(bitsize) << " & (unsigned)" << port.name << "_gvi_lw" << part << ";" << std::endl;		
+				out << "\t\t" << modulename << "_top_instances[idx]->" << port.name_orig << "[" << part << "] = " << gen_mask(bitsize) << " & (unsigned)" << port.name << "_gvi_lw" << part << ";" << std::endl;		
 				bitsize = 32;
 			}
 		}
@@ -708,7 +708,7 @@ std::string cpp_verilator_interface_function_definition_out(const std::string &m
 			if (port.bitsize <= 64) {
 				out << "\t\treturn " << modulename << "_top_instances[idx]->" << port.name_orig << " >> " << part*32 << ";" << std::endl;
 			} else {
-				out << "\t\treturn " << modulename << "_top_instances[idx]->" << port.name_orig << ".at(" << part << ");" << std::endl;
+				out << "\t\treturn " << modulename << "_top_instances[idx]->" << port.name_orig << "[" << part << "];" << std::endl;
 			}
 			out << "\t}" << std::endl;		
 		}		
