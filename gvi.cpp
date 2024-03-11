@@ -383,78 +383,80 @@ std::string ghdl_verilator_entity_end(const std::string &modulename) {
 std::string ghdl_verilator_interface_function_declaration_in(const std::string &modulename, const Port &port)
 {
 	std::string prefix = function_name_prefix(modulename);
-	// only bitsize of <= 32 for now
 	std::ostringstream out;
+	out << "\t--" << port.tk << std::endl;
 	if (port.bitsize <= 32) {
-		out << "\t--" << port.tk << std::endl;
 		out << "\tprocedure " << prefix << port.name << "(idx : integer; " << port.name << " : integer);" << std::endl;
-		out << "\tattribute foreign of " << prefix << port.name << " : procedure is \"VHPIDIRECT " << prefix << port.name << "\";";
-	} else if (port.bitsize <= 64) {
-		out << "\t--" << port.tk << std::endl;
-		out << "\tprocedure " << prefix << port.name << "(idx : integer; " << port.name << "_gvi_lo, " << port.name << "_gvi_hi " << " : integer);" << std::endl;
-		out << "\tattribute foreign of " << prefix << port.name << " : procedure is \"VHPIDIRECT " << prefix << port.name << "\";";		
+	} else {
+		out << "\tprocedure " << prefix << port.name << "(idx : integer; ";
+		int parts = 1 + (port.bitsize-1) / 32;
+		for (int part = parts-1; part >= 0; --part) {
+			out << port.name << "_gvi_lw" << part << " : integer";
+			if (part) out << ";";
+			else      out << ");" << std::endl;
+		}
 	}
+	out << "\tattribute foreign of " << prefix << port.name << " : procedure is \"VHPIDIRECT " << prefix << port.name << "\";";
 	return out.str();
 }
 std::string ghdl_verilator_interface_function_definition_in(const std::string &modulename, const Port &port)
 {
 	std::string prefix = function_name_prefix(modulename);
-	// only bitsize of <= 32 for now
 	std::ostringstream out;
+	out << "\t--" << port.tk << std::endl;
 	if (port.bitsize <= 32) {
-		out << "\t--" << port.tk << std::endl;
 		out << "\tprocedure " << prefix << port.name << "(idx : integer; " << port.name << " : integer) is" << std::endl;
-		out << "\tbegin" << std::endl;
-		out << "\t\tassert false report \"VHPI\" severity failure;" << std::endl;
-		out << "\tend procedure;";
-	} else if (port.bitsize <= 64) {
-		out << "\t--" << port.tk << std::endl;
-		out << "\tprocedure " << prefix << port.name << "(idx : integer; " << port.name << "_gvi_lo, " << port.name << "_gvi_hi " << " : integer) is" << std::endl;
-		out << "\tbegin" << std::endl;
-		out << "\t\tassert false report \"VHPI\" severity failure;" << std::endl;
-		out << "\tend procedure;";		
+	} else {
+		out << "\tprocedure " << prefix << port.name << "(idx : integer; ";
+		int parts = 1 + (port.bitsize-1) / 32;
+		for (int part = parts-1; part >= 0; --part) {
+			out << port.name << "_gvi_lw" << part << " : integer";
+			if (part) out << ";";
+			else      out << ") is" << std::endl;
+		}
 	}
+	out << "\tbegin" << std::endl;
+	out << "\t\tassert false report \"VHPI\" severity failure;" << std::endl;
+	out << "\tend procedure;";		
 	return out.str();
 }
 std::string ghdl_verilator_interface_function_declaration_out(const std::string &modulename, const Port &port)
 {
 	std::string prefix = function_name_prefix(modulename);
-	// only bitsize of <= 32 for now
 	std::ostringstream out;
 	if (port.bitsize <= 32) {
 		out << "\t--" << port.tk << std::endl;
 		out << "\tfunction " << prefix << port.name << "(idx : integer) return integer;" << std::endl;
 		out << "\tattribute foreign of " << prefix << port.name << " : function is \"VHPIDIRECT " << prefix << port.name << "\";";
-	} else if (port.bitsize <= 64) {
-		out << "\t--" << port.tk << std::endl;
-		out << "\tfunction " << prefix << port.name << "_gvi_lo(idx : integer) return integer;" << std::endl;
-		out << "\tattribute foreign of " << prefix << port.name << "_gvi_lo : function is \"VHPIDIRECT " << prefix << port.name << "_gvi_lo\";";
-		out << "\tfunction " << prefix << port.name << "_gvi_hi(idx : integer) return integer;" << std::endl;
-		out << "\tattribute foreign of " << prefix << port.name << "_gvi_hi : function is \"VHPIDIRECT " << prefix << port.name << "_gvi_hi\";";
+	} else {
+		int parts = 1 + (port.bitsize-1) / 32;
+		for (int part = parts-1; part >= 0; --part) {
+			out << "\t--" << port.tk << std::endl;
+			out << "\tfunction " << prefix << port.name << "_gvi_lw" << part << "(idx : integer) return integer;" << std::endl;
+			out << "\tattribute foreign of " << prefix << port.name << "_gvi_lw" << part << " : function is \"VHPIDIRECT " << prefix << port.name << "_gvi_lw" << part << "\";";
+		}
 	}
 	return out.str();
 }
 std::string ghdl_verilator_interface_function_definition_out(const std::string &modulename, const Port &port)
 {
 	std::string prefix = function_name_prefix(modulename);
-	// only bitsize of <= 32 for now
 	std::ostringstream out;
 	if (port.bitsize <= 32) {
 		out << "\t--" << port.tk << std::endl;
 		out << "\tfunction " << prefix << port.name << "(idx : integer) return integer is" << std::endl;
 		out << "\tbegin" << std::endl;
 		out << "\t\tassert false report \"VHPI\" severity failure;" << std::endl;
-		out << "\tend function;";
-	} else if (port.bitsize <= 64) {
+		out << "\tend function;" << std::endl;
+	} else {
+		int parts = 1 + (port.bitsize-1) / 32;
 		out << "\t--" << port.tk << std::endl;
-		out << "\tfunction " << prefix << port.name << "_gvi_lo(idx : integer) return integer is" << std::endl;
-		out << "\tbegin" << std::endl;
-		out << "\t\tassert false report \"VHPI\" severity failure;" << std::endl;
-		out << "\tend function;";
-		out << "\tfunction " << prefix << port.name << "_gvi_hi(idx : integer) return integer is" << std::endl;
-		out << "\tbegin" << std::endl;
-		out << "\t\tassert false report \"VHPI\" severity failure;" << std::endl;
-		out << "\tend function;";
+		for (int part = parts-1; part >= 0; --part) {
+			out << "\tfunction " << prefix << port.name << "_gvi_lw" << part << "(idx : integer) return integer is" << std::endl;
+			out << "\tbegin" << std::endl;
+			out << "\t\tassert false report \"VHPI\" severity failure;" << std::endl;
+			out << "\tend function;" << std::endl;
+		}
 	}
 	return out.str();
 }
@@ -475,22 +477,26 @@ void filename_to_modulename_unittest() {
 std::string ghdl_verilator_interface_set_inputs(const std::vector<Port> &ports, const std::string &modulename) {
 	std::ostringstream out;
 	for (auto port: ports) {
-		if (port.bitsize <= 64) {
-			if (port.direction == "in") {
-				if (port.bitsize == 1) {
-					if (port.is_array) {
-						out << "\t\t" << function_name_prefix(modulename) << port.name << "(" << modulename << "_idx, to_integer(unsigned(" << port.name << ")));" << std::endl;
-					} else {
-						out << "\t\t" << function_name_prefix(modulename) << port.name << "(" << modulename << "_idx, to_integer(" << port.name << "));" << std::endl;
-					}
-				} else if (port.bitsize <= 32) {
-					out << "\t\t" << function_name_prefix(modulename) << port.name << "(" << modulename << "_idx, to_integer(signed(" << port.name << ")));" << std::endl;
+		if (port.direction == "in") {
+			if (port.bitsize == 1) {
+				if (port.is_array) {
+					out << "\t\t" << function_name_prefix(modulename) << port.name << "(" << modulename << "_idx, to_integer(unsigned(" << port.name << ")));" << std::endl;
 				} else {
-					// the case for bitsize > 32 and <= 64
+					out << "\t\t" << function_name_prefix(modulename) << port.name << "(" << modulename << "_idx, to_integer(" << port.name << "));" << std::endl;
+				}
+			} else {
+				auto left_bit = port.left_bit;
+				int parts = 1 + (port.bitsize-1) / 32;
+				out << "\t\t" << function_name_prefix(modulename) << port.name << "(" << modulename << "_idx";
+				for (int part = parts-1; part >= 0; --part) {
 					if (port.left_bit > port.right_bit) { // the 'downto' case
-						out << "\t\t" << function_name_prefix(modulename) << port.name << "(" << modulename << "_idx, to_integer(signed(" << port.name << "(" << port.right_bit+31 << " downto " << port.right_bit << "))), to_integer(signed(" << port.name << "(" << port.left_bit << " downto " << port.right_bit+32 << "))));" << std::endl;
+						out << ", to_integer(signed(" << port.name << "(" << left_bit << " downto " << 32*part << ")))";
 					} else { // the 'to' case
-						out << "\t\t" << function_name_prefix(modulename) << port.name << "(" << modulename << "_idx, to_integer(signed(" << port.name << "(" << port.right_bit << " to " << port.right_bit+31 << "))), to_integer(signed(" << port.name << "(" << port.right_bit+32 << " downto " << port.left_bit << "))));" << std::endl;
+						out << ", to_integer(signed(" << port.name << "(" << 32*part << " to " << left_bit << ")))";
+					}
+					left_bit = 32*part-1;
+					if (part == 0) {
+						out << ");" << std::endl;
 					}
 				}
 			}
@@ -502,16 +508,20 @@ std::string ghdl_verilator_interface_set_inputs(const std::vector<Port> &ports, 
 std::string ghdl_verilator_interface_get_outputs(const std::vector<Port> &ports, const std::string &modulename) {
 	std::ostringstream out;
 	for (auto port: ports) {
-		if (port.bitsize <= 64) {
-			if (port.direction == "out") {
-				out << "\t\t" << port.name << " <= ";
-				if (port.bitsize == 1 && !port.is_array) {
-					out << "to_std_logic(" << function_name_prefix(modulename) << port.name << "(" << modulename << "_idx));" << std::endl;
-				} else if (port.bitsize <= 32) {
-					out << "std_logic_vector(to_signed(" << function_name_prefix(modulename) << port.name << "(" << modulename << "_idx), " << port.bitsize << "));" << std::endl;					
-				} else {
-					// case for bitsize > 32 and <= 64
-					out << "std_logic_vector(to_signed(" << function_name_prefix(modulename) << port.name << "_gvi_hi(" << modulename << "_idx), " << port.bitsize-32 << ")) & std_logic_vector(to_signed(" << function_name_prefix(modulename) << port.name << "_gvi_lo(" << modulename << "_idx), " << 32 << "));" << std::endl;					
+		if (port.direction == "out") {
+			out << "\t\t" << port.name << " <= ";
+			if (port.bitsize == 1 && !port.is_array) {
+				out << "to_std_logic(" << function_name_prefix(modulename) << port.name << "(" << modulename << "_idx));" << std::endl;
+			} else if (port.bitsize <= 32) {
+				out << "std_logic_vector(to_signed(" << function_name_prefix(modulename) << port.name << "(" << modulename << "_idx), " << port.bitsize << "));" << std::endl;
+			} else {
+				int parts = 1 + (port.bitsize-1) / 32;
+				auto bits = port.bitsize - (parts-1)*32;
+				for (int part = parts-1; part >= 0; --part) {
+					out << "std_logic_vector(to_signed(" << function_name_prefix(modulename) << port.name << "_gvi_lw" << part << "(" << modulename << "_idx), " << bits << "))";
+					if (part) out << " & ";
+					else      out << ";" << std::endl;
+					bits = 32;
 				}
 			}
 		}
@@ -535,7 +545,6 @@ void write_vhdl_file(std::ofstream &vhd_out, const std::vector<Port> &ports, con
 
 	vhd_out << ghdl_verilator_entity_begin(modulename);	
 	for (int i = 0; i < ports.size(); ++i) {
-		if (ports[i].bitsize > 64) continue;
 		if (i > 0) vhd_out << ";" << std::endl;
 		vhd_out << "\t" << ports[i].name << " : " << ports[i].direction;
 		if (ports[i].bitsize == 1 && !ports[i].is_array) vhd_out << " std_logic";
@@ -545,8 +554,6 @@ void write_vhdl_file(std::ofstream &vhd_out, const std::vector<Port> &ports, con
 			else                                        vhd_out << " to ";
 			vhd_out << ports[i].right_bit << ")";
 		} 
-		// if (i < ports.size()-1) vhd_out << ";";
-		// vhd_out << std::endl;
 	}
 	vhd_out << ghdl_verilator_entity_middle(modulename, ports);
 	vhd_out << "\t\twait for 0 ns;" << std::endl;
@@ -656,17 +663,32 @@ std::string gen_mask(int bitsize) {
 std::string cpp_verilator_interface_function_definition_in(const std::string &modulename, const Port &port)
 {
 	std::string prefix = function_name_prefix(modulename);
-	// only bitsize of <= 32 for now
 	std::ostringstream out;
 	if (port.bitsize <= 32) {
-		out << "\tvoid " << function_name_prefix(modulename) << port.name << "(int idx, int " << port.name_orig << ") {" << std::endl;
-		out << "\t\t" << modulename << "_top_instances[idx]->" << port.name_orig << " = " << gen_mask(port.bitsize) << " & (unsigned)" << port.name_orig << ";" << std::endl;
-		out << "\t}" << std::endl;
-	} else if (port.bitsize <= 64) {
-		out << "\tvoid " << function_name_prefix(modulename) << port.name << "(int idx, int " << port.name << "_gvi_lo, int " << port.name << "_gvi_hi" << ") {" << std::endl;
-		out << "\t\t" << modulename << "_top_instances[idx]->" << port.name_orig << " = " << gen_mask(port.bitsize-32) << " & (unsigned)" << port.name << "_gvi_hi;" << std::endl;
-		out << "\t\t" << modulename << "_top_instances[idx]->" << port.name_orig << " <<= 32;" << std::endl;
-		out << "\t\t" << modulename << "_top_instances[idx]->" << port.name_orig << " |= (unsigned)" << port.name << "_gvi_lo;" << std::endl;
+		out << "\tvoid " << function_name_prefix(modulename) << port.name << "(int idx, int " << port.name << ") {" << std::endl;
+		out << "\t\t" << modulename << "_top_instances[idx]->" << port.name_orig << " = " << gen_mask(port.bitsize) << " & (unsigned)" << port.name << ";" << std::endl;
+		out << "\t}" << std::endl; 
+	} else {
+		out << "\tvoid " << function_name_prefix(modulename) << port.name << "(int idx";
+		int parts = 1 + (port.bitsize-1) / 32;
+		for (int part = parts-1; part >= 0; --part) {
+			out << ", int " << port.name << "_gvi_lw" << part;
+		}		
+		out << ") {" << std::endl;
+		int bitsize = port.bitsize - 32*(parts-1);
+		if (port.bitsize <= 64) {
+			out << "\t\t" << modulename << "_top_instances[idx]->" << port.name_orig << " = " << gen_mask(bitsize) << " & (unsigned)" << port.name << "_gvi_lw" << parts-1 << ";" << std::endl;
+			bitsize = 32;
+			for (int part = parts-2; part >= 0; --part) {
+				out << "\t\t" << modulename << "_top_instances[idx]->" << port.name_orig << " <<= 32;" << std::endl;
+				out << "\t\t" << modulename << "_top_instances[idx]->" << port.name_orig << " |= (unsigned)" << port.name << "_gvi_lw" << part << ";" << std::endl;
+			}				
+		} else { // port.bitsize > 64
+			for (int part = parts-1; part >= 0; --part) {
+				out << "\t\t" << modulename << "_top_instances[idx]->" << port.name_orig << ".at(" << part << ") = " << gen_mask(bitsize) << " & (unsigned)" << port.name << "_gvi_lw" << part << ";" << std::endl;		
+				bitsize = 32;
+			}
+		}
 		out << "\t}" << std::endl;
 	}
 	return out.str();
@@ -674,19 +696,22 @@ std::string cpp_verilator_interface_function_definition_in(const std::string &mo
 std::string cpp_verilator_interface_function_definition_out(const std::string &modulename, const Port &port)
 {
 	std::string prefix = function_name_prefix(modulename);
-	// only bitsize of <= 32 for now
 	std::ostringstream out;
 	if (port.bitsize <= 32) {
 		out << "\tint " << function_name_prefix(modulename) << port.name << "(int idx) {" << std::endl;
 		out << "\t\treturn " << modulename << "_top_instances[idx]->" << port.name_orig << ";" << std::endl;
-		out << "\t}" << std::endl;
-	} else if (port.bitsize <= 64) {
-		out << "\tint " << function_name_prefix(modulename) << port.name << "_gvi_lo(int idx) {" << std::endl;
-		out << "\t\treturn " << modulename << "_top_instances[idx]->" << port.name_orig << ";" << std::endl;
 		out << "\t}" << std::endl;		
-		out << "\tint " << function_name_prefix(modulename) << port.name << "_gvi_hi(int idx) {" << std::endl;
-		out << "\t\treturn " << modulename << "_top_instances[idx]->" << port.name_orig << " >> 32;" << std::endl;
-		out << "\t}" << std::endl;		
+	} else {
+		int parts = 1 + (port.bitsize-1) / 32;
+		for (int part = parts-1; part >= 0; --part) {
+			out << "\tint " << function_name_prefix(modulename) << port.name << "_gvi_lw" << part << "(int idx) {" << std::endl;
+			if (port.bitsize <= 64) {
+				out << "\t\treturn " << modulename << "_top_instances[idx]->" << port.name_orig << " >> " << part*32 << ";" << std::endl;
+			} else {
+				out << "\t\treturn " << modulename << "_top_instances[idx]->" << port.name_orig << ".at(" << part << ");" << std::endl;
+			}
+			out << "\t}" << std::endl;		
+		}		
 	}
 	return out.str();
 }
@@ -695,10 +720,10 @@ void write_cpp_file(std::ofstream &cpp_out, const std::vector<Port> &ports, cons
 {
 	cpp_out << cpp_verilator_interface_preface(modulename, no_traces) << std::endl;
 	for (auto port: ports) {
-		if (port.bitsize <= 64) {
-			if (port.direction == "in") cpp_out << cpp_verilator_interface_function_definition_in(modulename, port) << std::endl;
-			if (port.direction == "out") cpp_out << cpp_verilator_interface_function_definition_out(modulename, port) << std::endl;
-		}
+		// if (port.bitsize <= 64) {
+		if (port.direction == "in") cpp_out << cpp_verilator_interface_function_definition_in(modulename, port) << std::endl;
+		if (port.direction == "out") cpp_out << cpp_verilator_interface_function_definition_out(modulename, port) << std::endl;
+		// }
 	}
 	cpp_out << "}" << std::endl;
 
