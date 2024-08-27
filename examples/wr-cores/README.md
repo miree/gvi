@@ -31,6 +31,6 @@ The patch (wrpc-sw.patch) is needed to compile with the lm32-elf-gcc package fro
 [gvi/examples/wr-cores/wrpc-sw]$ git submodule update
 [gvi/examples/wr-cores/wrpc-sw]$ make config # answer the questions
 [gvi/examples/wr-cores/wrpc-sw]$ make
-[gvi/examples/wr-cores/wrpc-sw]$ cp ..
+[gvi/examples/wr-cores/wrpc-sw]$ cd ..
 [gvi/examples/wr-cores/wrpc-sw]$ cp wrpc-sw/wrc.bram .
 ```
