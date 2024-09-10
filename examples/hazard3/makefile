@@ -5,7 +5,7 @@ VERILATOR_VERSION=`verilator --version | cut -d' ' -f 2 `
 gvi: ../../gvi.cpp
 	g++ -o $@ $<
 	
-.gvi/hazard3_core/hazard3_core_wrapper.vhd: Hazard3/hdl/hazard3_core.v
+.gvi/hazard3_core/hazard3_core_wrapper.vhd: gvi Hazard3/hdl/hazard3_core.v
 	./gvi -v Hazard3/hdl/hazard3_core.v -I Hazard3/hdl/ -I Hazard3/hdl/arith -I Hazard3/hdl/debug -t hazard3_core
 
 run: testbench
