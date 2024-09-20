@@ -1,6 +1,6 @@
 # GHDL Verilator Interface (GVI)
 
-GVI generates glue code that allows to run Verilog modules inside of VHDL testbenches. Have a look at the examples to see how it can be used. In order to run the m-labs-lm32, serv, ibex, hazard3 or wr-cores examples, git submodules have to be activated (`git submodule init; git submodule update;`)
+GVI generates glue code that allows to run Verilog modules inside of VHDL testbenches. Have a look at the examples to see how it can be used. In order to run the m-labs-lm32, serv, ibex, hazard3, picorv32_soc or wr-cores examples, git submodules have to be activated (`git submodule init; git submodule update;`)
 
  - examples/vhd_v_counter: Run a Verilog implementation of a counter with a VHDL implementation of the same counter in the same testbench.
  - examples/two_modules: Two Verilog modules used at the same time. They may have multiple clock ports.
@@ -8,6 +8,7 @@ GVI generates glue code that allows to run Verilog modules inside of VHDL testbe
  - examples/serv: Run an instance of the serv risc-v cpu.
  - examples/ibex: Run an instance of a more performant risc-v cpu.
  - examples/hazard3: Run an instance of yet another risc-v cpu.
+ - examples/picorv32_soc: A slightly more complex example with yet another risc-v CPU. The CPU has a custom wishbone wrapper for data and instruction bus and runs a firmware stored in memory that calculates digits of PI and writes these digits onto a pseudo UARD device that ends up in a text file in the simulation directory (`cpu_output.txt`). 
  - examples/wr-cores: Run an instance of the WhiteRabbit core, [build instructions are here](examples/wr-cores/README.md)
  - examples/vhdl_verilog_mixed: Demonstrate a fully mixed language design. VHDL implementation, Verilog implementation, and Verilog instantiating VHDL entity running together in the same testbench. This is possible because GHDL can convert VHDL code into Verilog code using its synthesis capabilities (only tested with GHDL version 4). 
 
