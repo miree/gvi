@@ -19,9 +19,7 @@ testbench: 	\
 	ghdl -a $(GHDLFLAGS) $+
 	ghdl -m $(GHDLFLAGS) \
 	        $(shell cat .gvi/common.flags) \
-	        $(shell cat .gvi/urv_cpu/urv_cpu_wrapper.flags) \
 	        $(shell cat .gvi/picorv32/picorv32_wrapper.flags) \
-	        $(shell cat .gvi/serv_rf_top/serv_rf_top_wrapper.flags) \
 	        testbench 
 
 clean:
