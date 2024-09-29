@@ -22,8 +22,8 @@ begin
 	clk_i <= not clk_i after 5 ns;
 	rst_i <= '0' after 20 ns;
 
-	--cpu : entity work.urv_cpu_wbp
-	cpu : entity work.picorv32_wbp2
+	cpu : entity work.urv_cpu_wbp
+	--cpu : entity work.picorv32_wbp2
 	--cpu : entity work.serv_rf_wbp
 	port map (
 		clk_i  => clk_i,

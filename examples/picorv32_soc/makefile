@@ -13,12 +13,15 @@ testbench: 	\
 		wbp_pkg.vhd                           \
 		wbp_mux.vhd                           \
 		dpram_wbp.vhd                         \
-		.gvi/picorv32/picorv32_wrapper.vhd       \
+		.gvi/urv_cpu/urv_cpu_wrapper.vhd      \
+		urv_cpu_wbp.vhd                       \
+		.gvi/picorv32/picorv32_wrapper.vhd    \
 		picorv32_wbp.vhd                      \
 		testbench.vhd
 	ghdl -a $(GHDLFLAGS) $+
 	ghdl -m $(GHDLFLAGS) \
 	        $(shell cat .gvi/common.flags) \
+	        $(shell cat .gvi/urv_cpu/urv_cpu_wrapper.flags)  \
 	        $(shell cat .gvi/picorv32/picorv32_wrapper.flags) \
 	        testbench 
 
@@ -26,8 +29,8 @@ clean:
 	rm -rf .gvi gvi *.o *.vcd *.ghw work-obj93.cf testbench firmware.bitvector
 
 
-# .gvi/urv_cpu/urv_cpu_wrapper.vhd: gvi ../urv-core/rtl/urv_cpu.v
-# 	./gvi -v ../urv-core/rtl/urv_cpu.v -t urv_cpu -I ../urv-core/rtl -o -Wno-fatal
+.gvi/urv_cpu/urv_cpu_wrapper.vhd: gvi urv-core/rtl/urv_cpu.v
+	./gvi -v urv-core/rtl/urv_cpu.v -t urv_cpu -I urv-core/rtl -o -Wno-fatal
 
 .gvi/picorv32/picorv32_wrapper.vhd: gvi picorv32/picorv32.v
 	./gvi -v picorv32/picorv32.v -t picorv32 -o -Wno-fatal -G 'ENABLE_IRQ=1' -G 'PROGADDR_RESET=0' -G 'ENABLE_MUL=1' -G 'ENABLE_DIV=1'

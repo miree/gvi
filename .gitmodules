@@ -19,3 +19,6 @@
 [submodule "examples/picorv32_soc/picorv32"]
 	path = examples/picorv32_soc/picorv32
 	url = https://github.com/YosysHQ/picorv32
+[submodule "examples/picorv32_soc/urv-core"]
+	path = examples/picorv32_soc/urv-core
+	url = https://ohwr.org/project/urv-core.git
