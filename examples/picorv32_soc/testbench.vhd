@@ -22,8 +22,11 @@ begin
 	clk_i <= not clk_i after 5 ns;
 	rst_i <= '0' after 20 ns;
 
-	cpu : entity work.urv_cpu_wbp
-	--cpu : entity work.picorv32_wbp2
+	-- select a large and fast, small and slow, or intermediate cpu
+	-- the wishbone wrappers are compatible and they all run with the exact same code
+
+	--cpu : entity work.urv_cpu_wbp
+	cpu : entity work.picorv32_wbp2
 	--cpu : entity work.serv_rf_wbp
 	port map (
 		clk_i  => clk_i,

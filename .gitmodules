@@ -22,3 +22,6 @@
 [submodule "examples/picorv32_soc/urv-core"]
 	path = examples/picorv32_soc/urv-core
 	url = https://ohwr.org/project/urv-core.git
+[submodule "examples/picorv32_soc/mdu"]
+	path = examples/picorv32_soc/mdu
+	url = https://github.com/zeeshanrafique23/mdu.git
