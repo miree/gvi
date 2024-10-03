@@ -88,6 +88,12 @@ architecture rtl of urv_cpu_wbp is
   signal dbg_mbx_data_i   : std_logic_vector(31 downto 0) := (others => '0');
   signal dbg_mbx_data_o   : std_logic_vector(31 downto 0) := (others => '0');
 
+  type t_state is (s_idle, s_write, s_read, s_read_wait_ack);
+  signal state : t_state := s_idle;
+
+  signal missing_ack : std_logic := '0';
+  signal missing_stb : std_logic := '0';
+
 begin
 
   ---- make sure the cycle is ended when rst is asserted
@@ -109,34 +115,95 @@ begin
   wbio.dat <= (others => '-'); -- don't care about output data bits on instruction bus
   wbio.adr <= im_addr_o;
 
-  -- data bus
-  dm_load_done_i  <= wbd_i.ack when wbdo.we = '0' else '0';
-  dm_store_done_i <= wbd_i.ack when wbdo.we = '1' else '0';
-  dm_data_l_i     <= wbd_i.dat;
+  wbdo.stb <= dm_store_o or dm_load_o when state = s_idle
+       else   dm_store_o or dm_load_o or missing_stb when state = s_write or state = s_read
+       else   '0' when state = s_read_wait_ack;
+
+  wbdo.cyc <= dm_store_o or dm_load_o or missing_ack when state = s_idle
+      else    '1' when state /= s_idle;
+
+  wbdo.adr <= dm_addr_o when (dm_store_o = '1' and state /= s_read) or dm_load_o = '1';
+  wbdo.sel <= dm_data_select_o when (dm_store_o = '1' and state /= s_read) or dm_load_o = '1';
+  wbdo.dat <= dm_data_s_o when dm_store_o = '1';
+  wbdo.we  <= '1' when state = s_idle and dm_store_o = '1'
+         else '1' when state = s_write
+         else '0';
+
+  dm_load_done_i <= wbd_i.ack when state = s_read or state = s_read_wait_ack
+             else   '0';
+
+  dm_data_l_i <= wbd_i.dat;
 
   process
   begin
-    wait until rising_edge(clk_i);   
+    wait until rising_edge(clk_i);
 
-    if dm_store_o = '1' or dm_load_o = '1' then
-      wbdo.adr <= dm_addr_o;
-      wbdo.cyc <= '1';
-      wbdo.stb <= '1';
-      wbdo.sel <= dm_data_select_o;
-    elsif wbdo.cyc = '1' and wbdo.stb = '0' and wbd_i.ack = '1' then
-      wbdo.cyc <= '0';
+    if missing_ack = '0' and wbd_o.stb = '1' and wbd_i.ack = '0' then
+      missing_ack <= '1';
     end if;
-    if dm_store_o = '1' then
-      wbdo.we <= '1';
-      wbdo.dat <= dm_data_s_o;
+
+    if missing_ack = '1' and wbd_o.stb = '0' and wbd_i.ack = '1' then
+      missing_ack <= '0';
     end if;
-    if dm_load_o = '1' then
-      wbdo.we <= '0';
+
+
+    if missing_stb = '0' and wbd_o.stb = '1' and wbd_i.stall = '1' then
+      missing_stb <= '1';
     end if;
-    if wbdo.stb = '1' and wbd_i.stall = '0' then
-      wbdo.stb <= '0';
-    end if; 
+
+    if missing_stb = '1' and wbd_o.stb = '1' and wbd_i.stall = '1' then
+      missing_stb <= '0';
+    end if;
+
+
+
+    if state = s_idle and wbd_i.stall = '0' then       
+      dm_store_done_i <= dm_store_o;
+    elsif state = s_write and wbd_i.stall = '0' then
+      dm_store_done_i <= '1';
+    end if;
+
+    case state is
+      
+      when s_idle =>
+        if dm_store_o = '1' and wbd_i.stall = '1' then 
+          state <= s_write;
+        end if;      
+        if dm_load_o = '1' then 
+          state <= s_read;
+        end if;      
+
+      when s_write => 
+        if wbd_i.stall = '0' and dm_store_o = '0' and dm_load_o = '0' then
+          state <= s_idle;
+        end if;
+        if wbd_i.stall = '0' and  dm_load_o = '1' then
+          state <= s_read;
+        end if;
+
+      when s_read =>
+        if wbd_i.ack = '0' then
+          state <= s_read_wait_ack; 
+        end if;
+        if wbd_i.ack = '1' and dm_load_o = '0' then
+          state <= s_idle;
+        end if;
+        if wbd_i.ack = '1' and dm_store_o = '1' and wbd_i.stall = '0' then
+          state <= s_idle;
+        end if;
+        if wbd_i.ack = '1' and dm_store_o = '1' and wbd_i.stall = '1' then
+          state <= s_write;
+        end if;
+
+      when s_read_wait_ack =>
+        if wbd_i.ack = '1' then 
+          state <= s_read;
+        end if;
+
+    end case;
+
   end process;
+
 
   cpu : urv_cpu
   port map (
