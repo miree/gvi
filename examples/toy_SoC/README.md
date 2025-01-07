@@ -6,12 +6,12 @@ The layout of the SoC looks like this.
 ![SoC](soc.png)
 
 Before running the testbench (`make`) git submodules must be enabled (`git submodule init; git submodule update`).
-All CPUs are wrapped with a [wishbone](https://cdn.opencores.org/downloads/wbspec_b4.pdf) interface to make the drop-in compatible.
+All CPUs are wrapped with a [wishbone](https://cdn.opencores.org/downloads/wbspec_b4.pdf) interface to make them drop-in compatible.
 
 ## CPU selection
 
   - [uRV](https://ohwr.org/project/urv-core): the most performant available CPU, bus also the largest
-  - [picorv32](https://github.com/YosysHQ/picorv32): smaller then uRV but also less performant, but has higher f_max
+  - [picorv32](https://github.com/YosysHQ/picorv32): smaller than uRV but also less performant, but has higher f_max
   - [serv](https://github.com/olofk/serv) with MDU: even smaller but ~10x slower than picorv32
 
   The CPU selection happens in `testbench.vhd` by selecting the type of the `cpu` instance. Just uncomment the one you want.
