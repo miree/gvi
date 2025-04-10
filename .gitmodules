@@ -7,21 +7,21 @@
 [submodule "examples/ibex/ibex"]
 	path = examples/ibex/ibex
 	url = https://github.com/lowRISC/ibex.git
-[submodule "examples/wr-cores/wr-cores"]
-	path = examples/wr-cores/wr-cores
-	url = https://ohwr.org/project/wr-cores.git
+#[submodule "examples/wr-cores/wr-cores"]
+#	path = examples/wr-cores/wr-cores
+#	url = https://ohwr.org/project/wr-cores.git
 [submodule "examples/wr-cores/wrpc-sw"]
 	path = examples/wr-cores/wrpc-sw
-	url = https://ohwr.org/project/wrpc-sw.git
+	url = https://gitlab.com/ohwr/project/wrpc-sw.git
 [submodule "examples/hazard3/Hazard3"]
 	path = examples/hazard3/Hazard3
 	url = https://github.com/Wren6991/Hazard3.git
-[submodule "examples/picorv32_soc/picorv32"]
+[submodule "examples/toy_SoC/picorv32"]
 	path = examples/toy_SoC/picorv32
 	url = https://github.com/YosysHQ/picorv32
-[submodule "examples/picorv32_soc/urv-core"]
+[submodule "examples/toy_SoC/urv-core"]
 	path = examples/toy_SoC/urv-core
-	url = https://ohwr.org/project/urv-core.git
-[submodule "examples/picorv32_soc/mdu"]
+	url = https://gitlab.com/ohwr/project/urv-core.git
+[submodule "examples/toy_SoC/mdu"]
 	path = examples/toy_SoC/mdu
 	url = https://github.com/zeeshanrafique23/mdu.git
