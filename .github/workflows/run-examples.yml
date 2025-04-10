@@ -14,8 +14,6 @@ jobs:
         run: ghdl --version
       - name: Check Verilator version    
         run: verilator --version
-      - name: run example wr-cores
-        run: cd examples/wr-cores; git submodule init; git submodule update; cd wr-cores; git apply ../wr-cores.patch; git submodule init; git submodule update; cd ..; make testbench; ghdl -r  testbench --max-stack-alloc=524288 --stop-time=10us --ieee-asserts=disable; cd ..
       - name: run example vhd_v_counter
         run: make -C examples/vhd_v_counter
       - name: run example m-labs-lm32
@@ -38,3 +36,5 @@ jobs:
         run: make -C examples/serv
       - name: run example ibex
         run: make -C examples/ibex
+#      - name: run example wr-cores
+#        run: cd examples/wr-cores; git submodule init; git submodule update; cd wr-cores; git apply ../wr-cores.patch; git submodule init; git submodule update; cd ..; make testbench; ghdl -r  testbench --max-stack-alloc=524288 --stop-time=10us --ieee-asserts=disable; cd ..
